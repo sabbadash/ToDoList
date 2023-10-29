@@ -18,9 +18,31 @@ public class DBWorker {
     }
 
     /**
-     * method deletes task from db with given id
-     * @param deletedId id we are looking for to delete
-     * @return returns true if task was deleted, if not false
+     * Method adds new Task to the table
+     * @param task is task wished to add to the list
+     * @return true is task was successfully added
+     */
+    public boolean addTask(Task task) {
+        String taskName = task.getTaskName();
+        String taskNote = task.getTaskNote();
+        boolean isAdded = false;
+
+        String query = "INSERT INTO task (task_name, task_note) values (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, taskName);
+            preparedStatement.setString(2, taskNote);
+             isAdded = preparedStatement.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isAdded;
+    }
+
+    /**
+     * Method deletes task from table with given id
+     * @param deletedId id method is looking for to delete
+     * @return true if task was deleted, otherwise false
      */
     public boolean deleteTask(int deletedId) {
         boolean isDeleted = false;
@@ -38,7 +60,7 @@ public class DBWorker {
 
     /**
      * Connection to db in constructor
-     * @return ArrayList<Task> with all tasks in table "task"
+     * @return ArrayList<Task> with all tasks in table
      */
     public ArrayList<Task> getAllTasks() {
 
@@ -71,7 +93,7 @@ public class DBWorker {
     /**
      * Method returns the task with id given
      * @param searchedTaskId is the id of task which method is looking for
-     * @return Task task
+     * @return Task task is
      */
     public Task getTask(int searchedTaskId) {
 
