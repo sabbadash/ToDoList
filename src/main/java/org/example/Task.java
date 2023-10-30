@@ -6,6 +6,19 @@ public class Task {
     private String taskName;
     private String taskNote;
 
+    private String listName;
+
+    public Task(int id, String taskName, String taskNote, String listName) {
+        this.taskID = id;
+        this.taskName = taskName;
+        this.taskNote = taskNote;
+        this.listName = listName;
+    }
+    public Task(String taskName, String taskNote, String listName) {
+        this.taskName = taskName;
+        this.taskNote = taskNote;
+        this.listName = listName;
+    }
     public Task(int id, String taskName, String taskNote) {
         this.taskID = id;
         this.taskName = taskName;
@@ -26,7 +39,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.getTaskID() + " " + this.getTaskName() + " " + this.getTaskNote();
+        return /*this.getTaskID() + " " + */this.getTaskName() + " " + this.getTaskNote();
     }
     //System.out.println(task);     -- ДА!
     //System.out.println(task.toString()); --- НЕ НУЖНО!
@@ -54,5 +67,13 @@ public class Task {
 
     public void setTaskNote(String taskNote) {
         this.taskNote = taskNote;
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public void setListName(String listName) {
+        this.listName = listName;
     }
 }

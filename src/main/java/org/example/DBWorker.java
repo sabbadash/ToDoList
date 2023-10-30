@@ -3,6 +3,18 @@ package org.example;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * идеи и вопросы:
+ * 1) по логике методы занимающееся работой с бд, должны находиться в классе DBWorker.
+ *
+ * переносить все методы в ToDoList глупо, а если создать в ToDoList свою функцию, которая будет создавать свой
+ * экземпляр класса DBWorker и вызывать этот метод у него, но из функции getAllTasks в ToDoList?
+ *      чтобы была возможность обратиться к экземпляру тудулиста и у него попросить все задачи, а не каждый раз
+ *      обращаться DBWorker.
+ *      глупо ли? или можно сделать как-то иначе?
+ *      тоже самое и с другими методами deleteTask(), getTask() и addTask(), можно ведь вызывать у экземпляра
+ *      тудулиста, а он обратится к бд
+ */
 public class DBWorker {
     private static final String URL = "jdbc:mysql://localhost:3306/todolist";
     private static final String USERNAME = "root";
@@ -17,26 +29,79 @@ public class DBWorker {
         }
     }
 
+
+
+    public ArrayList<String> getAllLists() {
+        ArrayList<String> returnedLists = new ArrayList<String>();
+//      сделать возврат листа
+        try {
+
+            // Получите метаданные базы данных
+            DatabaseMetaData dbm = connection.getMetaData();
+
+            // Получите список всех таблиц в базе данных
+            try (ResultSet tables = dbm.getTables(null, null, "%", new String[] { "TABLE" })) {
+                while (tables.next()) {
+                    String tableName = tables.getString("TABLE_NAME");
+                    returnedLists.add(tableName);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnedLists;
+    }
+
+
+    //сразу идейка, функцию можно занести в конструктор ToDoList и сразу создавать таблицу при создании экземпляра
+    /**
+     * добавить проверку на наличие таблицы в бд, можно вынести в отдельный метод
+     * @param toDoList
+     */
+    public void createList(ToDoList toDoList) {
+
+        String listName = toDoList.getListName();
+
+        if (!listName.matches("[a-zA-Z_]+")) {
+            throw new IllegalArgumentException("Invalid table name");
+        }
+        String query = "CREATE TABLE " + listName + " (" +
+                "`task_id` int NOT NULL AUTO_INCREMENT," +
+                "`task_name` varchar(45) NOT NULL," +
+                "`task_note` varchar(45) DEFAULT NULL," +
+                "PRIMARY KEY (`task_id`)" +
+                ") ENGINE=InnoDB AUTO_INCREMENT=1";
+
+        try (Statement statement = connection.createStatement()) {
+
+            statement.execute(query);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Method adds new Task to the table
      * @param task is task wished to add to the list
      * @return true is task was successfully added
      */
-    public boolean addTask(Task task) {
+    public void addTask(Task task) {        //boolean
         String taskName = task.getTaskName();
         String taskNote = task.getTaskNote();
         boolean isAdded = false;
 
-        String query = "INSERT INTO task (task_name, task_note) values (?, ?)";
+        String query = "INSERT INTO " + task.getListName() + " (task_name, task_note) values (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, taskName);
             preparedStatement.setString(2, taskNote);
-             isAdded = preparedStatement.executeUpdate() == 1;
+//             isAdded = preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return isAdded;
+        //return isAdded;
     }
 
     /**
@@ -44,9 +109,9 @@ public class DBWorker {
      * @param deletedId id method is looking for to delete
      * @return true if task was deleted, otherwise false
      */
-    public boolean deleteTask(int deletedId) {
+    public boolean deleteTask(int deletedId, String toDoList) {
         boolean isDeleted = false;
-        String query = "DELETE FROM task WHERE task_id = ?";          //preparedstatement
+        String query = "DELETE FROM " + toDoList + " WHERE task_id = ?";          //preparedstatement
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setInt(1, deletedId);            //setting task_id parameter
@@ -62,10 +127,10 @@ public class DBWorker {
      * Connection to db in constructor
      * @return ArrayList<Task> with all tasks in table
      */
-    public ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getAllTasks(String listName) {
 
         ArrayList<Task> returnedTasks = new ArrayList<Task>();
-        String query = "SELECT * FROM task";        //setting query
+        String query = "SELECT * FROM " + listName;        //setting query
 
         try (
                 Statement statement = connection.createStatement();
@@ -95,13 +160,13 @@ public class DBWorker {
      * @param searchedTaskId is the id of task which method is looking for
      * @return Task task is
      */
-    public Task getTask(int searchedTaskId) {
+    public Task getTask(int searchedTaskId, ToDoList toDoList) {
 
         Task returnedTask = null;
-        String query = "SELECT * FROM task WHERE task_id = ?";          //preparedstatement
+        String query = "SELECT * FROM " + toDoList.getListName() + " WHERE task_id = ?";          //preparedstatement
 
         try (
-                Statement statement = this.getConnection().createStatement();
+                Statement statement = connection.createStatement();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
         ){
 
