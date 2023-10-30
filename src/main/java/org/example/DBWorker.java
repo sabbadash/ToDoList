@@ -43,7 +43,9 @@ public class DBWorker {
             try (ResultSet tables = dbm.getTables(null, null, "%", new String[] { "TABLE" })) {
                 while (tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");
-                    returnedLists.add(tableName);
+                    if(!tableName.equals("sys_config")) {
+                        returnedLists.add(tableName);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -111,10 +113,17 @@ public class DBWorker {
      */
     public boolean deleteTask(int deletedId, String toDoList) {
         boolean isDeleted = false;
-        String query = "DELETE FROM " + toDoList + " WHERE task_id = ?";          //preparedstatement
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        ArrayList<Task> taskList = getAllTasks(toDoList);
+        if (taskList.isEmpty() || deletedId <= 0 || deletedId > taskList.size()) {
+            System.out.println("Invalid index or empty task list");
+            return false;
+        }
 
-            preparedStatement.setInt(1, deletedId);            //setting task_id parameter
+        String query = "DELETE FROM " + toDoList + " WHERE task_id = ?";          //preparedstatement
+        String resetingQuery = "ALTER TABLE " + toDoList + " AUTO_INCREMENT = 1";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            int actuallyDeletedId = taskList.get(--deletedId).getTaskID();
+            preparedStatement.setInt(1, actuallyDeletedId);            //setting task_id parameter
             isDeleted = preparedStatement.executeUpdate() == 1;             //if method deleted task returns 1, else 0
 
         } catch (SQLException e) {
@@ -154,6 +163,25 @@ public class DBWorker {
         return returnedTasks;
     }
 
+    public boolean renameTask(int id, String toDoList, String newName) {
+        String query = "UPDATE " + toDoList + " SET task_name = ? WHERE task_id = ?";
+        ArrayList<Task> taskList = getAllTasks(toDoList);
+        if (taskList.isEmpty() || id <= 0 || id > taskList.size()) {
+            System.out.println("Invalid index or empty task list");
+            return false;
+        }
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, newName);
+            preparedStatement.setInt(2, taskList.get(id - 1).getTaskID()); // convert 1-based to 0-based
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 
     /**
      * Method returns the task with id given
@@ -188,6 +216,8 @@ public class DBWorker {
 
         return returnedTask;
     }
+
+
 
     public void closeConnetion() {
         try {
