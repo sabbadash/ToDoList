@@ -3,9 +3,9 @@ package org.example;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class UIManager {
+public class uiManager {
     private DBWorker db;
-    public UIManager() {
+    public uiManager() {
         db = new DBWorker();
     }
 
@@ -27,7 +27,7 @@ public class UIManager {
             System.out.println("Thank you for using application!");
             db.closeConnetion();
             System.exit(0);
-        }else {
+        } else {
             System.out.println(
                     "\n\nThis list does not exist. Sorry XD" +
                     "\nWould you like to create? y/n");
@@ -73,7 +73,6 @@ public class UIManager {
         } else if(input.equals("..")) {
             printListMenu();
         }
-
     }
 
     public void manageTaskMenu(int taskId, String toDoList) {
@@ -88,7 +87,6 @@ public class UIManager {
             db.renameTask(taskId, toDoList, newName);
             printAllTasks(toDoList);
         } else if(action.equals("d")) {
-            //deleting
             db.deleteTask(taskId, toDoList);
             printAllTasks(toDoList);
         } else if(action.equals("..")) {

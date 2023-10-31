@@ -2,14 +2,14 @@ package org.example;
 
 public class Task {
 
-    private int taskID;
+    private int taskId;
     private String taskName;
     private String taskNote;
 
     private String listName;
 
     public Task(int id, String taskName, String taskNote, String listName) {
-        this.taskID = id;
+        this.taskId = id;
         this.taskName = taskName;
         this.taskNote = taskNote;
         this.listName = listName;
@@ -20,7 +20,7 @@ public class Task {
         this.listName = listName;
     }
     public Task(int id, String taskName, String taskNote) {
-        this.taskID = id;
+        this.taskId = id;
         this.taskName = taskName;
         this.taskNote = taskNote;
     }
@@ -39,18 +39,15 @@ public class Task {
 
     @Override
     public String toString() {
-        return /*this.getTaskID() + " " + */this.getTaskName() + " " + this.getTaskNote();
-    }
-    //System.out.println(task);     -- ДА!
-    //System.out.println(task.toString()); --- НЕ НУЖНО!
-    //при написании имени класса у него автоматичеки вызывается метод toString()
-
-    public int getTaskID() {
-        return taskID;
+        return this.getTaskName() + " " + this.getTaskNote();
     }
 
-    public void setTaskID(int taskID) {
-        this.taskID = taskID;
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
     }
 
     public String getTaskName() {

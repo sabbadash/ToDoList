@@ -29,17 +29,11 @@ public class DBWorker {
         }
     }
 
-
-
     public ArrayList<String> getAllLists() {
         ArrayList<String> returnedLists = new ArrayList<String>();
-//      сделать возврат листа
         try {
-
-            // Получите метаданные базы данных
             DatabaseMetaData dbm = connection.getMetaData();
 
-            // Получите список всех таблиц в базе данных
             try (ResultSet tables = dbm.getTables(null, null, "%", new String[] { "TABLE" })) {
                 while (tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");
@@ -122,7 +116,7 @@ public class DBWorker {
         String query = "DELETE FROM " + toDoList + " WHERE task_id = ?";          //preparedstatement
         String resetingQuery = "ALTER TABLE " + toDoList + " AUTO_INCREMENT = 1";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            int actuallyDeletedId = taskList.get(--deletedId).getTaskID();
+            int actuallyDeletedId = taskList.get(--deletedId).getTaskId();
             preparedStatement.setInt(1, actuallyDeletedId);            //setting task_id parameter
             isDeleted = preparedStatement.executeUpdate() == 1;             //if method deleted task returns 1, else 0
 
@@ -172,7 +166,7 @@ public class DBWorker {
         }
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, newName);
-            preparedStatement.setInt(2, taskList.get(id - 1).getTaskID()); // convert 1-based to 0-based
+            preparedStatement.setInt(2, taskList.get(id - 1).getTaskId()); // convert 1-based to 0-based
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -217,11 +211,11 @@ public class DBWorker {
         return returnedTask;
     }
 
-
-
     public void closeConnetion() {
         try {
-            connection.close();
+            if(connection != null) {
+                connection.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
