@@ -29,8 +29,10 @@ public class DBWorker {
         }
     }
 
+
+    //USERDB - ID
     public ArrayList<String> getAllLists() {
-        ArrayList<String> returnedLists = new ArrayList<String>();
+        ArrayList<String> returnedLists = new ArrayList<>();
         try {
             DatabaseMetaData dbm = connection.getMetaData();
 
@@ -49,6 +51,7 @@ public class DBWorker {
     }
 
 
+    //USERDB
     //сразу идейка, функцию можно занести в конструктор ToDoList и сразу создавать таблицу при создании экземпляра
     /**
      * добавить проверку на наличие таблицы в бд, можно вынести в отдельный метод
@@ -77,6 +80,8 @@ public class DBWorker {
         }
     }
 
+
+    //DBLIST
     /**
      * Method adds new Task to the table
      * @param task is task wished to add to the list
@@ -100,6 +105,8 @@ public class DBWorker {
         //return isAdded;
     }
 
+
+    //DBLIST/DBTASK
     /**
      * Method deletes task from table with given id
      * @param deletedId id method is looking for to delete
@@ -126,6 +133,7 @@ public class DBWorker {
         return isDeleted;
     }
 
+    //DBLIST
     /**
      * Connection to db in constructor
      * @return ArrayList<Task> with all tasks in table
@@ -157,6 +165,8 @@ public class DBWorker {
         return returnedTasks;
     }
 
+
+    ////DBLIST/DBTASK
     public boolean renameTask(int id, String toDoList, String newName) {
         String query = "UPDATE " + toDoList + " SET task_name = ? WHERE task_id = ?";
         ArrayList<Task> taskList = getAllTasks(toDoList);
@@ -177,6 +187,7 @@ public class DBWorker {
 
 
 
+    //DBLIST
     /**
      * Method returns the task with id given
      * @param searchedTaskId is the id of task which method is looking for
