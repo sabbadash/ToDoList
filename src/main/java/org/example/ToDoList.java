@@ -1,22 +1,32 @@
 package org.example;
 
 public class ToDoList {
-    private String listName;
+    private int list_id;
+    private String list_name;
+    private int user_id;
 
-    public ToDoList(String listName) {
-        this.listName = listName;
+    public ToDoList(String list_name, int user_id) {
+        this.list_name = list_name;
+        this.user_id = user_id;
     }
 
-    //сразу идейка, функцию можно занести в конструктор и сразу создавать таблицу при создании экземпляра
-//    public void createList() {
-//
-//    }
-
-    public String getListName() {
-        return listName;
+    public int getList_id() {
+        return list_id;
     }
 
-    public void setListName(String listName) {
-        this.listName = listName;
+    public void setList_id(int list_id) {
+        this.list_id = list_id;
+    }
+
+    public String getList_name() {
+        return list_name;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 }

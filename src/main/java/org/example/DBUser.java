@@ -3,6 +3,18 @@ package org.example;
 import java.sql.*;
 import java.util.ArrayList;
 
+/*
+        TODO: [x]   boolean addUser(User user)
+        TODO: [x]   boolean removeUser(int id)
+        TODO: [x]   ArrayList<User> getAllUsers()
+        TODO: [x]   int getLastUserId()
+        TODO: [x]   boolean isUserExists()
+
+        TODO: [ ]
+        TODO: [ ]
+        TODO: [ ]
+        TODO: [ ]
+ */
 public class DBUser {
     private static final ConfigLoader config = new ConfigLoader();
     private static final String URL = config.getDbUrl();
@@ -10,27 +22,28 @@ public class DBUser {
     private static final String PASSWORD = config.getDbPassword();
     private static final String usersTableName = "users";
 
-    private final String creatingTableQuery  = "CREATE TABLE `" + usersTableName + "` (" +
-            "  `user_id` int NOT NULL AUTO_INCREMENT," +
-            "  `username` varchar(45) NOT NULL," +
-            "  `user_passwordhash` VARCHAR(128) NOT NULL," +
-            "  PRIMARY KEY (`user_id`)," +
-            "  UNIQUE KEY `user_id_UNIQUE` (`user_id`)," +
-            "  UNIQUE KEY `username_UNIQUE` (`username`)" +
-            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
+//    private static final String creatingTableQuery  = "CREATE TABLE `" + usersTableName + "` (" +
+//            "  `user_id` int NOT NULL AUTO_INCREMENT," +
+//            "  `username` varchar(45) NOT NULL," +
+//            "  `user_passwordhash` VARCHAR(128) NOT NULL," +
+//            "  PRIMARY KEY (`user_id`)," +
+//            "  UNIQUE KEY `user_id_UNIQUE` (`user_id`)," +
+//            "  UNIQUE KEY `username_UNIQUE` (`username`)" +
+//            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
 
-    public DBUser() {
-        if(!Utils.isTableExists(usersTableName)) {
-            Utils.createTable(creatingTableQuery);
-        }
-    }
+//    public DBUser() {
+//        if(!Utils.isTableExists(usersTableName)) {
+//            Utils.createTable(creatingTableQuery);
+//        }
+//    }
 
-    public boolean addUser(User user) {
+    public static boolean addUser(User user) {
+        boolean isAdded = false;
         if(isUserExists(user)) {
             System.out.println("Username already exists :9");
-            return false;
+            return isAdded;
         }
-        boolean isAdded = false;
+
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             String sqlQuery = "INSERT INTO " + usersTableName + " (username, user_passwordhash) VALUES (?, ?)";
 
@@ -48,7 +61,7 @@ public class DBUser {
         return isAdded;
     }
 
-    public boolean removeUser(int user_id) {
+    public static boolean removeUser(int user_id) {
         boolean isRemoved = false;
 
         ArrayList<User> userList = getAllUsers();
@@ -70,7 +83,35 @@ public class DBUser {
         return isRemoved;
     }
 
-    public ArrayList<User> getAllUsers() {
+    public static User getUser(String username) {
+        User returnedUser = null;
+        String query = "SELECT * FROM " + usersTableName + " WHERE username = ?";
+        try (
+                Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                Statement statement = connection.createStatement();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ){
+            preparedStatement.setString(1, username);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {      //executing query
+                if (resultSet.next()) { // If a record exists
+                    int     id      = resultSet.getInt("user_id");
+                    String  name    = resultSet.getString("username");
+                    String  note    = resultSet.getString("user_passwordhash");
+
+                    returnedUser = new User(name, note);
+                    returnedUser.setUser_id(id);
+                }
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return returnedUser;
+    }
+
+    public static ArrayList<User> getAllUsers() {
         ArrayList<User> returnedUsers = new ArrayList<>();
         String query = "SELECT * FROM " + usersTableName;
         try (
@@ -95,7 +136,7 @@ public class DBUser {
         return returnedUsers;
     }
 
-    private int getLastUserId() {
+    private static int getLastUserId() {
         int lastUserId = 0;
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             String sql = "SELECT user_id FROM " + usersTableName + " ORDER BY user_id DESC LIMIT 1";
@@ -113,7 +154,7 @@ public class DBUser {
         return lastUserId;
     }
 
-    private boolean isUserExists(User user) {
+    private static boolean isUserExists(User user) {
         boolean isExists = false;
         String searchingUsername = user.getUsername();
         ArrayList<User> users = getAllUsers();

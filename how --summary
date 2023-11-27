@@ -1,0 +1,35 @@
+[33mcommit 928e702a8b4cc4aeff733dd76cd2449cdfaf38ab[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Thu Nov 23 21:10:02 2023 +0000
+
+    Classes DBUser, ConfigLoader, Utils, PasswordHasher were implemented. DBTask, DBList were created. Now database login data stored at .properties file. Users' passwords are stored in hash. Updated database model.
+
+[33mcommit 687a3c16dc067674ca27d5e16433686c439f6f66[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Tue Oct 31 17:02:33 2023 +0000
+
+    updated
+
+[33mcommit 09ed7c7191bb12ca97ae6f262bd16e94868f3e57[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Mon Oct 30 20:30:35 2023 +0000
+
+    basic logic is working
+
+[33mcommit 728f191d9f34eb6607e3100b539a0bfcf75a1011[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Mon Oct 30 00:37:05 2023 +0000
+
+    basic logic showing work with database, creating todo's/tasks and deleting
+
+[33mcommit 5a142707190575c83c00e298aed2d091cc2e24f1[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Sun Oct 29 22:50:54 2023 +0000
+
+    method for adding tasks to table was created
+
+[33mcommit 88b6b14ddca7b758ea06869f36d77a8cc43159d6[m
+Author: Nazar Sabadash <nazarii.sabadash@gmail.com>
+Date:   Sat Oct 28 00:16:23 2023 +0100
+
+    FIRST COMMIT. TEST

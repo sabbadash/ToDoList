@@ -23,15 +23,14 @@ public class Utils {
         return isExists;
     }
 
-    public static void createTable(String creatingQuery) {
-        try (
-                Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-                Statement statement = connection.createStatement()
-        ) {
-            statement.execute(creatingQuery);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+//    public static void createTable(String creatingQuery) {
+//        try (
+//                Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+//                Statement statement = connection.createStatement()
+//        ) {
+//            statement.execute(creatingQuery);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
